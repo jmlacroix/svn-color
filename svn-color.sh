@@ -59,6 +59,8 @@ function svn
 
 			echo -e "$C$RL\033[0m\033[0;0m"
 		done
+	else
+		$(whereis svn) $CMD
 	fi
 
 }
