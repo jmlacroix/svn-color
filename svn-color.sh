@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#TODO
-# check zsh support
-
 function svn
 {
 	CMD=" $* "
