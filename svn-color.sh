@@ -12,14 +12,14 @@ function svn
 	test "$CMDLEN" = "${#CMD}"
 	if [ $? = 1 ] || [ ! -t 1 ]
 	then
-		$(whereis svn) $CMD
+		$(which svn) $CMD
 		return
 	fi
 
 	# actions that outputs "status-like" data
 	if [[ "$1" =~ ^(st|add) ]]
 	then
-		$(whereis svn) $CMD | while IFS= read RL
+		$(which svn) $CMD | while IFS= read RL
 		do
 			if   [[ $RL =~ ^\ ?M ]]; then C="\033[34m";
 			elif [[ $RL =~ ^\ ?C ]]; then C="\033[41m\033[37m\033[1m";
@@ -37,7 +37,7 @@ function svn
 	# actions that outputs "diff-like" data
 	elif [[ "$1" =~ ^diff ]]
 	then
-		$(whereis svn) $CMD | while IFS= read RL
+		$(which svn) $CMD | while IFS= read RL
 		do
 			if   [[ $RL =~ ^Index:\  ]]; then C="\033[34m\033[1m";
 			elif [[ $RL =~ ^@@ ]]; then C="\033[37m";
@@ -60,7 +60,7 @@ function svn
 			echo -e "$C$RL\033[0m\033[0;0m"
 		done
 	else
-		$(whereis svn) $CMD
+		$(which svn) $CMD
 	fi
 
 }
