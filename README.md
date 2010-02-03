@@ -14,7 +14,8 @@ You can disable colors at any time with the --nocol option.
 TODO
 ====
 
-- Add more svn functions for "status like" data output (rm, checkout, ...)
+- Add colors for output of "update" which is slightly different
+- Tweak string matching to ignore false positives
 - Check/add zsh compatibility
 
 COPYRIGHT

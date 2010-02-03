@@ -2,24 +2,41 @@
 
 function svn
 {
-	CMD=" $* "
+	# rebuild args to get quotes right
+	CMD=
+	for i in "$@"
+	do
+		if [[ "$i" =~ \  ]]
+		then
+			CMD="$CMD \"$i\""
+		else
+			CMD="$CMD $i"
+		fi
+	done
+
+	# pad with spaces to strip --nocol
+	CMD=" $CMD "
 	CMDLEN=${#CMD}
 
 	# parse disabling arg
-	CMD=${CMD/ --nocol / }
+	CMD="${CMD/ --nocol / }"
 
 	# check if disabled
 	test "$CMDLEN" = "${#CMD}"
 	if [ $? = 1 ] || [ ! -t 1 ]
 	then
-		$(which svn) $CMD
+		eval $(which svn) $CMD
 		return
 	fi
 
+	# supported svn actions for "status-like" output
+	ACTIONS="add|checkout|co|cp|del|export|remove|rm|st"
+	ACTIONS="$ACTIONS|merge|mkdir|move|mv|ren|sw|up"
+
 	# actions that outputs "status-like" data
-	if [[ "$1" =~ ^(st|add) ]]
+	if [[ "$1" =~ ^($ACTIONS) ]]
 	then
-		$(which svn) $CMD | while IFS= read RL
+		eval $(which svn) $CMD | while IFS= read RL
 		do
 			if   [[ $RL =~ ^\ ?M ]]; then C="\033[34m";
 			elif [[ $RL =~ ^\ ?C ]]; then C="\033[41m\033[37m\033[1m";
@@ -28,6 +45,7 @@ function svn
 			elif [[ $RL =~ ^X ]]; then C="\033[37m";
 			elif [[ $RL =~ ^! ]]; then C="\033[43m\033[37m\033[1m";
 			elif [[ $RL =~ ^I ]]; then C="\033[33m";
+			elif [[ $RL =~ ^R ]]; then C="\033[35m";
 			else C=
 			fi
 
@@ -37,7 +55,7 @@ function svn
 	# actions that outputs "diff-like" data
 	elif [[ "$1" =~ ^diff ]]
 	then
-		$(which svn) $CMD | while IFS= read RL
+		eval $(which svn) $CMD | while IFS= read RL
 		do
 			if   [[ $RL =~ ^Index:\  ]]; then C="\033[34m\033[1m";
 			elif [[ $RL =~ ^@@ ]]; then C="\033[37m";
@@ -60,7 +78,6 @@ function svn
 			echo -e "$C$RL\033[0m\033[0;0m"
 		done
 	else
-		$(which svn) $CMD
+		eval $(which svn) $CMD
 	fi
-
 }
