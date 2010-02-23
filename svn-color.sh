@@ -36,7 +36,7 @@ function svn
 	# actions that outputs "status-like" data
 	if [[ "$1" =~ ^($ACTIONS) ]]
 	then
-		eval $(which svn) $CMD | while IFS= read RL
+		eval $(which svn) $CMD | while IFS= read -r RL
 		do
 			if   [[ $RL =~ ^\ ?M ]]; then C="\033[34m";
 			elif [[ $RL =~ ^\ ?C ]]; then C="\033[41m\033[37m\033[1m";
@@ -49,13 +49,13 @@ function svn
 			else C=
 			fi
 
-			echo -e "$C$RL\033[0m\033[0;0m"
+			echo -e "$C${RL/\\/\\\\}\033[0m\033[0;0m"
 		done
 
 	# actions that outputs "diff-like" data
 	elif [[ "$1" =~ ^diff ]]
 	then
-		eval $(which svn) $CMD | while IFS= read RL
+		eval $(which svn) $CMD | while IFS= read -r RL
 		do
 			if   [[ $RL =~ ^Index:\  ]]; then C="\033[34m\033[1m";
 			elif [[ $RL =~ ^@@ ]]; then C="\033[37m";
@@ -75,7 +75,7 @@ function svn
 			else C=
 			fi
 
-			echo -e "$C$RL\033[0m\033[0;0m"
+			echo -e "$C${RL/\\/\\\\}\033[0m\033[0;0m"
 		done
 	else
 		eval $(which svn) $CMD
