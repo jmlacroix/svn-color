@@ -23,7 +23,8 @@ function svn
 
 	# check if disabled
 	test "$CMDLEN" = "${#CMD}"
-	if [ $? = 1 ] || [ ! -t 1 ]
+	NOCOL=$?
+	if [ "$SVN_COLOR" != "always" ] && ( [ $NOCOL = 1 ] || [ "$SVN_COLOR" = "never" ] || [ ! -t 1 ] )
 	then
 		eval $(which svn) $CMD
 		return
